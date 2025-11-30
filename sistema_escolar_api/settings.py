@@ -185,13 +185,19 @@ ALLOWED_HOSTS = ['127.0.0.1', 'sistema-escolar-wepapp-xd2.vercel.app'] # <-- Ase
 # 4. Lee las credenciales de la BD
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'NAME': os.environ.get('DB_NAME', 'dev_db'),
+        #⬅️ CORRECCIÓN: CAMBIAR EL MOTOR A POSTGRESQL 
+        'ENGINE': 'django.db.backends.postgresql', 
+        
+        #El resto está bien, usando los valores de Render como fallback:
+        'HOST': os.environ.get('DB_HOST', 'dpg-d4lr38buibres73875as0-a'),
+        'USER': os.environ.get('DB_USER', 'sistema_escolar_v376_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'LaJo12FSSAOZkrP3GrM8mQI6CpcjMsfO'),
+        'NAME': os.environ.get('DB_NAME', 'sistema_escolar_v376'),
+        
         'OPTIONS': {
-            'charset': 'utf8mb4'
+        # Este charset no es necesario para Postgres y puede causar advertencias
+            # Puedes eliminar esta línea o cambiarla por el estándar si usas Postres:
+            # 'charset': 'utf8', 
         }
     }
 }
