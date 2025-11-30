@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+import dj_database_url
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -87,7 +87,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sistema_escolar_api.wsgi.application'
 
-
+'''
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
@@ -100,6 +100,7 @@ DATABASES = {
         }
     }
 }
+'''
 
 # Running on production App Engine, so connect to Google Cloud SQL using
 # the unix socket at /cloudsql/<your-cloudsql-connection string>
@@ -183,21 +184,29 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['127.0.0.1', 'sistema-escolar-wepapp-xd2.vercel.app'] # <-- Asegúrate de cambiar 'tu-proyecto'
 
 # 4. Lee las credenciales de la BD
+# ESTO REEMPLAZA COMPLETAMENTE EL BLOQUE DATABASES ANTERIOR
+'''
 DATABASES = {
-    'default': {
-        #⬅️ CORRECCIÓN: CAMBIAR EL MOTOR A POSTGRESQL 
-        'ENGINE': 'django.db.backends.postgresql', 
-        
-        #El resto está bien, usando los valores de Render como fallback:
-        'HOST': os.environ.get('DB_HOST', 'dpg-d4lr38buibres73875as0-a'),
-        'USER': os.environ.get('DB_USER', 'sistema_escolar_v376_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'LaJo12FSSAOZkrP3GrM8mQI6CpcjMsfO'),
-        'NAME': os.environ.get('DB_NAME', 'sistema_escolar_v376'),
-        
-        'OPTIONS': {
-        # Este charset no es necesario para Postgres y puede causar advertencias
-            # Puedes eliminar esta línea o cambiarla por el estándar si usas Postres:
-            # 'charset': 'utf8', 
-        }
-    }
+    'default': dj_database_url.config(
+        default=(
+            # ⬅️ URL COMPLETA DE RENDER
+            "postgresql://sistema_escolar_v376_user:LaJo12FSSAOZkrP3GrM8mQI6CpcjMsfO@dpg-d4lr38buibrs73875as0-a.oregon-postgres.render.com/sistema_escolar_v376"
+        ),
+        # ⬅️ EL ARGUMENTO CORREGIDO Y EN PLURAL (Resuelto el error anterior)
+        conn_health_checks=True, 
+        conn_max_age=600,
+        # Si usas Django 5.0+, puede que necesites esta línea también:
+        # ssl_require=True, 
+    )
+}
+'''
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 
+        # ⬅️ Aquí solo debes poner una URL de desarrollo local si existiera
+        'postgresql://user:pass@localhost:5432/db_local'), 
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
